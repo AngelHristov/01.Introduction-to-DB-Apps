@@ -10,10 +10,11 @@
             " Database ={0};" +
             " Integrated Security = true";
 
+        private static string databaseName = "MinionsDB";
+
         public static void Main(string[] args)
         {
             SqlConnection connection = new SqlConnection(String.Format(connectionString, "master"));
-
             
             try
             {
@@ -21,11 +22,11 @@
 
                 using (connection)
                 {
-                    SqlCommand command = new SqlCommand("CREATE DATABASE MinionsDB", connection);
+                    SqlCommand command = new SqlCommand($"CREATE DATABASE {databaseName}", connection);
 
                     command.ExecuteNonQuery();
 
-                    Console.WriteLine("Database MinionsDB created successfully!");
+                    Console.WriteLine($"Database {databaseName} created successfully!");
                 }
             }
             catch (Exception e)
@@ -35,7 +36,28 @@
                 Console.WriteLine($"{e.Message}");
             }
 
-            // connection = new SqlConnection(String.Format(connectionString, "MinionsDB"));
+            connection = new SqlConnection(String.Format(connectionString, databaseName));
+
+            connection.Open();
+
+            using (connection)
+            {
+                string queryText = @"CREATE TABLE Countries (Id INT PRIMARY KEY IDENTITY,Name VARCHAR(50))
+
+                                     CREATE TABLE Towns(Id INT PRIMARY KEY IDENTITY,Name VARCHAR(50), CountryCode INT FOREIGN KEY REFERENCES Countries(Id))
+
+                                     CREATE TABLE Minions(Id INT PRIMARY KEY IDENTITY,Name VARCHAR(30), Age INT, TownId INT FOREIGN KEY REFERENCES Towns(Id))
+
+                                    CREATE TABLE EvilnessFactors(Id INT PRIMARY KEY IDENTITY, Name VARCHAR(50))
+
+                                    CREATE TABLE Villains (Id INT PRIMARY KEY IDENTITY, Name VARCHAR(50), EvilnessFactorId INT FOREIGN KEY REFERENCES EvilnessFactors(Id))
+
+                                    CREATE TABLE MinionsVillains (MinionId INT FOREIGN KEY REFERENCES Minions(Id),VillainId INT FOREIGN KEY REFERENCES Villains(Id),CONSTRAINT PK_MinionsVillains PRIMARY KEY (MinionId, VillainId))";
+               
+                SqlCommand command = new SqlCommand(queryText, connection);
+
+                command.ExecuteNonQuery();
+            }
         }
     }
 }
