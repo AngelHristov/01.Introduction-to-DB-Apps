@@ -10,7 +10,7 @@
             " Database ={0};" +
             " Integrated Security = true";
 
-        private static string databaseName = "MinionsDB";
+        private static string dataBaseName = "MinionsDB";
 
         public static void Main(string[] args)
         {
@@ -22,21 +22,21 @@
 
                 using (connection)
                 {
-                    SqlCommand command = new SqlCommand($"CREATE DATABASE {databaseName}", connection);
+                    SqlCommand command = new SqlCommand($"CREATE DATABASE {dataBaseName}", connection);
 
                     command.ExecuteNonQuery();
 
-                    Console.WriteLine($"Database {databaseName} created successfully!");
+                    Console.WriteLine($"Database {dataBaseName} created successfully!");
                 }
             }
             catch (Exception e)
             {
 
-                Console.WriteLine("Something gone wrong with creating MinionsDB Database!");
+                Console.WriteLine($"Something gone wrong with creating {dataBaseName} Database!");
                 Console.WriteLine($"{e.Message}");
             }
 
-            connection = new SqlConnection(String.Format(connectionString, databaseName));
+            connection = new SqlConnection(String.Format(connectionString, dataBaseName));
 
             connection.Open();
 
